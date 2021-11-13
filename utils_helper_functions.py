@@ -5,6 +5,18 @@ import numpy as np
 import time
 import os
 import copy
+from os import walk
+
+def convert_path_to_txt(mypath):
+    text_file = open('labels.txt', 'w')
+    f = []
+    for (dirpath, dirnames, filenames) in walk(mypath):
+        f.extend(dirnames)
+        break
+    for element in sorted(f):
+        text_file.write(element+'\n')
+    text_file.close
+    return text_file
 
 def train_model(model, dataloaders, criterion, optimiser, num_epochs=25, is_inception=False):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -13,7 +25,10 @@ def train_model(model, dataloaders, criterion, optimiser, num_epochs=25, is_ince
 
     val_acc_history = []
 
-    best_model_wts = copy.deepcopy(model.state.dict())
+    try:
+        best_model_wts = copy.deepcopy(model.state.dict())
+    except:
+        pass
     best_acc = 0.0
 
     for epoch in range(num_epochs):
